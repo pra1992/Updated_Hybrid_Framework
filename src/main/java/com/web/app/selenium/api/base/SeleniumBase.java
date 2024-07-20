@@ -4,7 +4,11 @@ import java.time.Duration;
 import java.util.List;
 
 import org.aeonbits.owner.ConfigFactory;
+import org.openqa.selenium.By;
+import org.openqa.selenium.ElementClickInterceptedException;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.SessionNotCreatedException;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.NoSuchDriverException;
 import org.openqa.selenium.remote.UnreachableBrowserException;
@@ -21,14 +25,24 @@ public class SeleniumBase extends DriverInstance implements Browser, Element {
 	private static final ConfigPropertiesHandler config = ConfigFactory.create(ConfigPropertiesHandler.class);
 
 	@Override
-	public void executeJavaScript(String js, WebElement ele) {
-		// TODO Auto-generated method stub
-		
+	public void executeJavaScript(String js, WebElement ele) {		
+		getDriver().executeScript(js, ele);
 	}
 
 	@Override
 	public void click(WebElement ele) {
-		ele.click();		
+		try {
+			ele.click();
+		} catch (ElementClickInterceptedException e) {
+			new Logs().console().info("The exception is usually thrown when an attempt to click on an element on a web page is intercepted or blocked by another element. "+e.toString());
+	        new Logs().file().info("The exception is usually thrown when an attempt to click on an element on a web page is intercepted or blocked by another element. "+e.toString());		
+			executeJavaScript("arguments[0].scrollIntoView();", ele);
+			ele.click();
+		} catch (Exception e) {
+			new Logs().console().fail("Unable to click the given "+ele.toString()+" webelement. Due to --> "+e.toString());
+			new Logs().file().fail("Unable to click the given "+ele.toString()+" webelement. Due to --> "+e.toString());
+            throw new RuntimeException("Unable to click the given "+ele.toString()+" webelement. Due to --> "+e.toString());
+		}
 	}
 
 	@Override
@@ -224,8 +238,31 @@ public class SeleniumBase extends DriverInstance implements Browser, Element {
 
 	@Override
 	public WebElement locateElement(Locators locatorType, String value) {
-		// TODO Auto-generated method stub
-		return null;
+		WebElement element = null;
+		try {
+			switch (locatorType) {
+			case ID:
+				element = getDriver().findElement(By.id(value));
+				new Logs().console().pass("Found the given weblement "+value+" using id locator type.");
+				break;
+			case NAME:
+				element = getDriver().findElement(By.name(value));
+				break;
+			case CLASS_NAME:
+				element = getDriver().findElement(By.className(value));
+				break;
+			default:
+				break;
+			}
+		} catch (NoSuchElementException e) {
+			new Logs().console().fail("Unable to found given web element "+value+" using"+locatorType.toString()+" type. "+e.toString());
+			throw new RuntimeException("Unable to found given web element "+value+" using"+locatorType.toString()+" type."+e.toString());
+		} catch (StaleElementReferenceException e) {
+			
+		} catch (Exception e) {
+			
+		}
+		return element;
 	}
 
 	@Override

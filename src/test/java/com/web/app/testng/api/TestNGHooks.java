@@ -1,5 +1,7 @@
 package com.web.app.testng.api;
 
-public class TestNGHooks {
+import com.web.app.selenium.api.base.SeleniumBase;
+
+public class TestNGHooks extends SeleniumBase {
 
 }

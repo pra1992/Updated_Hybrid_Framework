@@ -1,5 +1,7 @@
 package com.web.app.framework.utlis.properties;
 
+import java.util.List;
+
 import org.aeonbits.owner.Config;
 
 @Config.Sources(value = {"file:${user.dir}/waf-config.properties"})
@@ -19,5 +21,11 @@ public interface ConfigPropertiesHandler extends Config {
 	
 	@Key(value = "waf.test.application.url")
 	String getAutUrl();
+	
+	@Key("waf.chromium.browser.options")
+	List<String> getChromiumCliSwitches();
+	
+	@Key("waf.firefox.browser.options")
+	List<String> getFriefoxCliOptions();
 
 }
