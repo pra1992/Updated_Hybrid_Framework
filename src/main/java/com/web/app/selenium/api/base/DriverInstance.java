@@ -5,6 +5,10 @@ import java.time.Duration;
 import org.aeonbits.owner.ConfigFactory;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.edge.EdgeDriver;
+import org.openqa.selenium.edge.EdgeOptions;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -33,19 +37,31 @@ public class DriverInstance {
 	public void setDriver(String browser, boolean headless) throws SessionNotCreatedException, ConnectionClosedException, UnreachableBrowserException, NoSuchDriverException, Exception{		
 		switch (browser) {
 		case "chrome":
-			ChromeOptions options = new ChromeOptions();
-			if(headless) { options.addArguments("--headless=new"); }
-			options.addArguments("--start-maximized"); 
-			options.addArguments("--disable-notifications"); 
-			options.addArguments("--incognito");
-			driver.set(new ChromeDriver(options));
-			getDriver().manage().timeouts().implicitlyWait(Duration.ofSeconds(config.getImplicitWaitTime()));
+			ChromeOptions chromeOptions = new ChromeOptions();
+			if(headless) { chromeOptions.addArguments("--headless=new"); }
+			chromeOptions.addArguments(config.getChromiumCliSwitches());
+			driver.set(new ChromeDriver(chromeOptions));
 			new Logs().console().pass("Successfully launched CHROME browser in the local machine.");
 			new Logs().file().pass("Successfully launched CHROME browser in the local machine.");
 			break;
-		case "firefox":			
+		case "firefox":
+			FirefoxOptions firefoxOptions = new FirefoxOptions();
+			if(headless) { firefoxOptions.addArguments("-headless"); }
+			firefoxOptions.addArguments(config.getFriefoxCliOptions());
+			firefoxOptions.addPreference("dom.webnotifications.enabled", false);
+			driver.set(new FirefoxDriver(firefoxOptions));
+			getDriver().manage().window().maximize();
+			new Logs().console().pass("Successfully launched FIREFOX browser in the local machine.");
+			new Logs().file().pass("Successfully launched FIREFOX browser in the local machine.");
 			break;
 		case "edge":
+			EdgeOptions edgeOptions = new EdgeOptions();
+			if(headless) { edgeOptions.addArguments("--headless=new"); }
+			edgeOptions.addArguments(config.getChromiumCliSwitches());
+			driver.set(new EdgeDriver(edgeOptions));
+			new Logs().console().pass("Successfully launched EDGE browser in the local machine.");
+			new Logs().file().pass("Successfully launched EDGE browser in the local machine.");
+			break;
 		default:
 			new Logs().console().warning("Currently web app framework supports CHROME, FIREFOX and EDGE browsers.");
 			new Logs().file().warning("Currently web app framework supports CHROME, FIREFOX and EDGE browsers.");
