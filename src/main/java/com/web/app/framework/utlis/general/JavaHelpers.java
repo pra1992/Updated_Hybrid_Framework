@@ -19,5 +19,15 @@ public class JavaHelpers {
 			throw new RuntimeException(e);
 		}
 	}
+	
+	public static String getFolderPathIfNotCreateNew(String folderName) {
+		File folder = new File(System.getProperty("user.dir")+ "/" +folderName);
+		if(!folder.exists()) {
+			folder.mkdir();
+			return folder.getAbsolutePath()+"/";
+		} else {
+			return folder.getAbsolutePath()+"/";
+		}
+	}
 
 }

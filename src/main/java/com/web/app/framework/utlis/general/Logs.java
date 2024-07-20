@@ -45,7 +45,7 @@ public class Logs {
 		String pattern = "dd-MM-yyyy'T'HH:mm:ss.SSS";
 		
 		public File() {
-			logsFolder = System.getProperty("user.dir")+"/logs/";
+			logsFolder = JavaHelpers.getFolderPathIfNotCreateNew("logs");
 		}
 		
 		public void pass(String details) {
