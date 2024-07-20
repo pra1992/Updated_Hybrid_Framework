@@ -12,9 +12,9 @@ import org.openqa.selenium.safari.ConnectionClosedException;
 
 import com.web.app.framework.utlis.general.Logs;
 import com.web.app.framework.utlis.properties.ConfigPropertiesHandler;
-import com.web.app.selenium.app.design.Browser;
-import com.web.app.selenium.app.design.Element;
-import com.web.app.selenium.app.design.Locators;
+import com.web.app.selenium.api.design.Browser;
+import com.web.app.selenium.api.design.Element;
+import com.web.app.selenium.api.design.Locators;
 
 public class SeleniumBase extends DriverInstance implements Browser, Element {
 	
@@ -28,13 +28,12 @@ public class SeleniumBase extends DriverInstance implements Browser, Element {
 
 	@Override
 	public void click(WebElement ele) {
-		// TODO Auto-generated method stub
-		
+		ele.click();		
 	}
 
 	@Override
 	public void append(WebElement ele, String data) {
-		// TODO Auto-generated method stub
+		ele.sendKeys(data);
 		
 	}
 

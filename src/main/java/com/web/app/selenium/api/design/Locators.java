@@ -1,4 +1,4 @@
-package com.web.app.selenium.app.design;
+package com.web.app.selenium.api.design;
 
 public enum Locators {	
 	ID, XPATH, CLASS_NAME, NAME, CSS, LINK_TEXT, PARTIAL_LINKTEXT, TAGNAME

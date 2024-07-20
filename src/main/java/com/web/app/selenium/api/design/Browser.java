@@ -1,4 +1,4 @@
-package com.web.app.selenium.app.design;
+package com.web.app.selenium.api.design;
 
 import java.util.List;
 
