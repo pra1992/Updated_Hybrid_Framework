@@ -1,6 +1,5 @@
 package com.web.app.selenium.app.design;
 
-import java.net.MalformedURLException;
 import java.util.List;
 
 import org.openqa.selenium.NoAlertPresentException;
@@ -28,7 +27,7 @@ public interface Browser {
 	 * and load the url
 	 * @param url - This will load the specified url  `
 	 * @author TestLeaf Team
-	 * @throws MalformedURLException 
+	 * @throws SessionNotCreatedException, ConnectionClosedException, UnreachableBrowserException, NoSuchDriverException, Exception 
 	 */	
 	public void startApp(String url, boolean headless);
 	
@@ -39,7 +38,7 @@ public interface Browser {
 	 * @param browser - This will load the specified browser
 	 * @param url - This will load the specified url  
 	 * @author TestLeaf Team
-	 * @throws MalformedURLException 
+	 * @throws SessionNotCreatedException, ConnectionClosedException, UnreachableBrowserException, NoSuchDriverException, Exception 
 	 */
 	public void startApp(String browser, boolean headless, String url);
 	/**
