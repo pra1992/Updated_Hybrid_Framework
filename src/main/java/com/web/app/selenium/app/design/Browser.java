@@ -12,8 +12,19 @@ import org.openqa.selenium.WebElement;
 public interface Browser {
 	
 	/**
-	 * This method will launch the Chrome browser and 
-	 * maximise the browser and set the wait for 30 seconds 
+	 * This method will launch the Chrome browser as default
+	 * Headless - Options is flase as default 
+	 * maximise the browser and set the wait seconds in the waf-config.properties file 
+	 * and load the url
+	 * @param url - This will load the specified url  `
+	 * @author TestLeaf Team
+	 * @throws SessionNotCreatedException, ConnectionClosedException, UnreachableBrowserException, NoSuchDriverException, Exception 
+	 */	
+	public void startApp(String url);
+	
+	/**
+	 * This method will launch the browser which is mentioned in waf-config.properties file  
+	 * maximise the browser and set the wait seconds in the waf-config.properties file 
 	 * and load the url
 	 * @param url - This will load the specified url  `
 	 * @author TestLeaf Team
@@ -23,7 +34,7 @@ public interface Browser {
 	
 	/**
 	 * This method will launch the Any browser and 
-	 * maximise the browser and set the wait for 30 seconds 
+	 * maximise the browser and set the wait seconds in the waf-config.properties file 
 	 * and load the url
 	 * @param browser - This will load the specified browser
 	 * @param url - This will load the specified url  

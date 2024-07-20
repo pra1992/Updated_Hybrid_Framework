@@ -11,6 +11,11 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import com.web.app.framework.utlis.general.Logs;
 import com.web.app.framework.utlis.properties.ConfigPropertiesHandler;
 
+import org.openqa.selenium.remote.NoSuchDriverException;
+import org.openqa.selenium.remote.UnreachableBrowserException;
+import org.openqa.selenium.safari.ConnectionClosedException;
+import org.openqa.selenium.*;
+
 public class DriverInstance {
 	
 	private static final ThreadLocal<RemoteWebDriver> driver = new ThreadLocal<RemoteWebDriver>();
@@ -25,7 +30,7 @@ public class DriverInstance {
 		return wait.get();
 	}
 
-	public void setDriver(String browser, boolean headless) {		
+	public void setDriver(String browser, boolean headless) throws SessionNotCreatedException, ConnectionClosedException, UnreachableBrowserException, NoSuchDriverException, Exception{		
 		switch (browser) {
 		case "chrome":
 			ChromeOptions options = new ChromeOptions();
