@@ -78,7 +78,7 @@ public interface Element {
 	 * @author TestLeaf Team
 	 * @return The attribute/property's current value (or) null if the value is not set.
 	 */
-	 String getTypedText(WebElement ele);
+	 String getTypedText(WebElement ele , String attribute);
 	
 
 	/**
@@ -129,7 +129,7 @@ public interface Element {
 	 * @see locateElement method in Browser Class
 	 * @return true if this String represents the same sequence of characters as the specified string, false otherwise
 	 */
-	 boolean verifyPartialText(WebElement ele, String expectedText);
+	 boolean verifyPartialText(WebElement ele, String expectedText, String Value);
 
 	/**
 	 * This method will verify exact given attribute's value with actual value on the given element
@@ -152,7 +152,7 @@ public interface Element {
 	 * @return true if this String represents the same sequence of characters as the specified value, false otherwise
 	 * 
 	 */
-	 void verifyPartialAttribute(WebElement ele, String attribute, String value);
+	 boolean verifyPartialAttribute(WebElement ele, String attribute, String value);
 	
 	/**
 	 * This method will verify if the element is visible in the DOM

@@ -2,6 +2,7 @@ package com.web.app.selenium.api.design;
 
 import java.util.List;
 
+import org.openqa.selenium.Alert;
 import org.openqa.selenium.NoAlertPresentException;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.NoSuchFrameException;
@@ -58,15 +59,6 @@ public interface Browser {
 	 * @throws NoSuchElementException
 	 * @return The first matching element on the current context.
 	 */
-	public WebElement locateElement(String value);
-	
-	/**
-	 * This method will locates all matching element using any given locator
-	 * @param locatorType  - The locator by which the element to be found
-	 * @param locValue - The locator value by which the element to be found
-	 * @author TestLeaf Team
-	 * @return A list of all WebElements, or an empty list if nothing matches.
-	 */
 	public List<WebElement> locateElements(Locators locatorType, String value);	
 	
 	/**
@@ -74,7 +66,7 @@ public interface Browser {
 	 * @author TestLeaf Team
 	 * @return NoAlertPresentException
 	 */
-	public void switchToAlert();
+	public Alert switchToAlert();
 	/**
 	 * This method will accept the alert opened
 	 * @author TestLeaf Team
@@ -156,6 +148,7 @@ public interface Browser {
 	 * This method will verify browser actual url with expected
 	 * @param url   - The url to be checked
 	 * @author TestLeaf Team
+	@Override
 	 * @return true if the given object represents a String equivalent to this url, false otherwise
 	 */
 	public boolean verifyUrl(String url);
@@ -186,5 +179,7 @@ public interface Browser {
 	 * @author TestLeaf Team
 	 */
 	public void quit();
+
+	String getTypedText(WebElement ele, String attributeValue);
 
 }
