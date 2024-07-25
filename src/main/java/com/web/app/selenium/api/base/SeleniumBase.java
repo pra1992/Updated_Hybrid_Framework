@@ -18,6 +18,7 @@ import org.openqa.selenium.NoSuchWindowException;
 import org.openqa.selenium.SessionNotCreatedException;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.remote.NoSuchDriverException;
 import org.openqa.selenium.remote.UnreachableBrowserException;
 import org.openqa.selenium.safari.ConnectionClosedException;
@@ -38,6 +39,10 @@ public class SeleniumBase extends DriverInstance implements Browser, Element {
 	@Override
 	public void executeJavaScript(String js, WebElement ele) {
 		getDriver().executeScript(js, ele);
+	}
+	
+	public void KeyPress(WebElement ele) {
+		
 	}
 
 	@Override
@@ -62,6 +67,44 @@ public class SeleniumBase extends DriverInstance implements Browser, Element {
 					"Unable to click the given " + ele.toString() + " webelement. Due to --> " + e.toString());
 		}
 	}
+	
+	public void clickUsingActions(WebElement ele) {
+		try {
+			new Actions(getDriver()).moveToElement(ele).click().build().perform();
+		} catch (ElementClickInterceptedException e) {
+			new Logs().console().info(
+					"The exception is usually thrown when an attempt to click on an element on a web page is intercepted or blocked by another element. "
+							+ e.toString());
+			new Logs().file().info(
+					"The exception is usually thrown when an attempt to click on an element on a web page is intercepted or blocked by another element. "
+							+ e.toString());
+			executeJavaScript("arguments[0].scrollIntoView();", ele);
+			ele.click();
+		} catch (Exception e) {
+			new Logs().console()
+					.fail("Unable to click the given " + ele.toString() + " webelement. Due to --> " + e.toString());
+			new Logs().file()
+					.fail("Unable to click the given " + ele.toString() + " webelement. Due to --> " + e.toString());
+			throw new RuntimeException(
+					"Unable to click the given " + ele.toString() + " webelement. Due to --> " + e.toString());
+		}
+	}
+	
+	public void scrollToElement(WebElement ele) {
+		try {
+			new Actions(getDriver()).moveToElement(ele).build().perform();
+		
+		} catch (Exception e) {
+			new Logs().console()
+					.fail("Unable to move to the given " + ele.toString() + " webelement. Due to --> " + e.toString());
+			new Logs().file()
+					.fail("Unable to move to the given " + ele.toString() + " webelement. Due to --> " + e.toString());
+			throw new RuntimeException(
+					"Unable to click the move to " + ele.toString() + " webelement. Due to --> " + e.toString());
+		}
+	}
+	
+	
 
 	@Override
 	public void append(WebElement ele, String data) {
@@ -683,6 +726,23 @@ public class SeleniumBase extends DriverInstance implements Browser, Element {
 
 	}
 
+	
+	
+	public void checkWindowHandles() {
+		String ParentWindow = getDriver().getWindowHandle();
+		try {
+		for (String OpenWindow : getDriver().getWindowHandles()) {
+			if (!OpenWindow.equals(ParentWindow)) {
+				getDriver().switchTo().window(OpenWindow);
+			}
+		}
+	} catch (NoSuchWindowException e) {
+		new Logs().console().fail("Unable to switch to the window due to " + e.getMessage());
+	} catch (Exception e) {
+		new Logs().console().fail("Unable to switch to the window due to " + e.getMessage());
+	}}
+	
+	
 	@Override
 	public void switchToFrame(int index) {
 		try {

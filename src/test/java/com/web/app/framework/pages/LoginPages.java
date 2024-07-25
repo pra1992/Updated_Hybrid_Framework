@@ -11,9 +11,18 @@ public class LoginPages extends TestNGHooks {
 	LoginPageElements loginpage = ConfigFactory.create(LoginPageElements.class);
 	
 	public LoginPages enterUserName(String  uname) {
-		append(locateElement(Locators.XPATH, loginpage.getUsernameObject()), uname);
+		append(locateElement(Locators.XPATH, loginpage.username()), uname);
 		return this;
 	}
 	
+	public LoginPages enterPassword(String pword) {
+		append(locateElement(Locators.XPATH, loginpage.username()), pword);
+		return this;
+	}
+	
+	public HomePage clickLoginButton() {
+		click(locateElement(Locators.XPATH, loginpage.loginButton()));
+		return new HomePage();
+	}
 
 }
