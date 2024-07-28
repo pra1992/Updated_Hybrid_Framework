@@ -1,5 +1,8 @@
 package com.web.app.selenium.api.base;
 
+import java.awt.AWTException;
+import java.awt.Robot;
+import java.awt.event.KeyEvent;
 import java.security.NoSuchAlgorithmException;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -11,6 +14,7 @@ import org.aeonbits.owner.ConfigFactory;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.ElementClickInterceptedException;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.NoAlertPresentException;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.NoSuchFrameException;
@@ -41,9 +45,10 @@ public class SeleniumBase extends DriverInstance implements Browser, Element {
 		getDriver().executeScript(js, ele);
 	}
 	
-	public void KeyPress(WebElement ele) {
-		
+	public void executeJavaScript(String js, WebElement ele, int value) {
+		getDriver().executeScript(js, ele, value);
 	}
+
 
 	@Override
 	public void click(WebElement ele) {
@@ -67,7 +72,7 @@ public class SeleniumBase extends DriverInstance implements Browser, Element {
 					"Unable to click the given " + ele.toString() + " webelement. Due to --> " + e.toString());
 		}
 	}
-	
+
 	public void clickUsingActions(WebElement ele) {
 		try {
 			new Actions(getDriver()).moveToElement(ele).click().build().perform();
@@ -89,11 +94,11 @@ public class SeleniumBase extends DriverInstance implements Browser, Element {
 					"Unable to click the given " + ele.toString() + " webelement. Due to --> " + e.toString());
 		}
 	}
-	
+
 	public void scrollToElement(WebElement ele) {
 		try {
 			new Actions(getDriver()).moveToElement(ele).build().perform();
-		
+
 		} catch (Exception e) {
 			new Logs().console()
 					.fail("Unable to move to the given " + ele.toString() + " webelement. Due to --> " + e.toString());
@@ -103,8 +108,6 @@ public class SeleniumBase extends DriverInstance implements Browser, Element {
 					"Unable to click the move to " + ele.toString() + " webelement. Due to --> " + e.toString());
 		}
 	}
-	
-	
 
 	@Override
 	public void append(WebElement ele, String data) {
@@ -116,6 +119,18 @@ public class SeleniumBase extends DriverInstance implements Browser, Element {
 			new Logs().console().fail("Unable to append the text due to " + e.getMessage());
 			new Logs().file().fail("Unable to append the text due to " + e.getMessage());
 			throw new RuntimeException("Unable to append the text due to " + e.getMessage());
+		}
+	}
+
+	public void append(WebElement ele, Keys key) {
+		getWait().until(ExpectedConditions.visibilityOf(ele));
+		try {
+			ele.sendKeys(key);
+			new Logs().console().pass("Able to press the Key into the " + ele.toString());
+		} catch (Exception e) {
+			new Logs().console().fail("Unable to press the Key into the " + e.getMessage());
+			new Logs().file().fail("Unable to press the Key into the" + e.getMessage());
+			throw new RuntimeException("Unable to press the Key into the " + e.getMessage());
 		}
 	}
 
@@ -726,23 +741,21 @@ public class SeleniumBase extends DriverInstance implements Browser, Element {
 
 	}
 
-	
-	
 	public void checkWindowHandles() {
 		String ParentWindow = getDriver().getWindowHandle();
 		try {
-		for (String OpenWindow : getDriver().getWindowHandles()) {
-			if (!OpenWindow.equals(ParentWindow)) {
-				getDriver().switchTo().window(OpenWindow);
+			for (String OpenWindow : getDriver().getWindowHandles()) {
+				if (!OpenWindow.equals(ParentWindow)) {
+					getDriver().switchTo().window(OpenWindow);
+				}
 			}
+		} catch (NoSuchWindowException e) {
+			new Logs().console().fail("Unable to switch to the window due to " + e.getMessage());
+		} catch (Exception e) {
+			new Logs().console().fail("Unable to switch to the window due to " + e.getMessage());
 		}
-	} catch (NoSuchWindowException e) {
-		new Logs().console().fail("Unable to switch to the window due to " + e.getMessage());
-	} catch (Exception e) {
-		new Logs().console().fail("Unable to switch to the window due to " + e.getMessage());
-	}}
-	
-	
+	}
+
 	@Override
 	public void switchToFrame(int index) {
 		try {
@@ -850,5 +863,330 @@ public class SeleniumBase extends DriverInstance implements Browser, Element {
 		}
 
 	}
+
+	// Key Board Events //
+
+	/**
+	 * @param>> Accepts Uppercase character as Input
+	 * @throws>> AWTException
+	 * @return>> KeyEvent
+	 */
+	public int getKeyEventUpperCase(Character character) throws AWTException {
+		int key = 0;
+		try {
+			switch (character) {
+			case 'A':
+				key = KeyEvent.VK_A;
+				break;
+			case 'B':
+				key = KeyEvent.VK_B;
+				break;
+			case 'C':
+				key = KeyEvent.VK_C;
+				break;
+			case 'D':
+				key = KeyEvent.VK_D;
+				break;
+			case 'E':
+				key = KeyEvent.VK_E;
+				break;
+			case 'F':
+				key = KeyEvent.VK_F;
+				break;
+			case 'G':
+				key = KeyEvent.VK_G;
+				break;
+			case 'H':
+				key = KeyEvent.VK_H;
+				break;
+			case 'I':
+				key = KeyEvent.VK_I;
+				break;
+			case 'J':
+				key = KeyEvent.VK_J;
+				break;
+			case 'K':
+				key = KeyEvent.VK_K;
+				break;
+			case 'L':
+				key = KeyEvent.VK_L;
+				break;
+			case 'M':
+				key = KeyEvent.VK_M;
+				break;
+			case 'N':
+				key = KeyEvent.VK_N;
+				break;
+			case 'O':
+				key = KeyEvent.VK_O;
+				break;
+			case 'P':
+				key = KeyEvent.VK_P;
+				break;
+			case 'Q':
+				key = KeyEvent.VK_Q;
+				break;
+			case 'R':
+				key = KeyEvent.VK_R;
+				break;
+			case 'S':
+				key = KeyEvent.VK_S;
+				break;
+			case 'T':
+				key = KeyEvent.VK_T;
+				break;
+			case 'U':
+				key = KeyEvent.VK_U;
+				break;
+			case 'V':
+				key = KeyEvent.VK_V;
+				break;
+			case 'W':
+				key = KeyEvent.VK_W;
+				break;
+			case 'X':
+				key = KeyEvent.VK_X;
+				break;
+			case 'Y':
+				key = KeyEvent.VK_Y;
+				break;
+			case 'Z':
+				key = KeyEvent.VK_Z;
+				break;
+			}
+		} catch (Exception e) {
+			new Logs().console().fail("Unable to fect the KeyEvent due to " + e.getMessage());
+			new Logs().file().fail("Unable to fect the KeyEvent due to " + e.getMessage());
+		}
+		return key;
+	}
+
+	/**
+	 * @param>> Accepts Uppercase character as Input
+	 * @throws>> AWTException
+	 * @return>> KeyEvent
+	 */
+	public int getKeyEventLowerCase(Character character) throws AWTException {
+		int key = 0;
+		try {
+			switch (character) {
+			case 'a':
+				key = KeyEvent.VK_A;
+				break;
+			case 'b':
+				key = KeyEvent.VK_B;
+				break;
+			case 'c':
+				key = KeyEvent.VK_C;
+				break;
+			case 'd':
+				key = KeyEvent.VK_D;
+				break;
+			case 'e':
+				key = KeyEvent.VK_E;
+				break;
+			case 'f':
+				key = KeyEvent.VK_F;
+				break;
+			case 'g':
+				key = KeyEvent.VK_G;
+				break;
+			case 'h':
+				key = KeyEvent.VK_H;
+				break;
+			case 'i':
+				key = KeyEvent.VK_I;
+				break;
+			case 'j':
+				key = KeyEvent.VK_J;
+				break;
+			case 'k':
+				key = KeyEvent.VK_K;
+				break;
+			case 'l':
+				key = KeyEvent.VK_L;
+				break;
+			case 'm':
+				key = KeyEvent.VK_M;
+				break;
+			case 'n':
+				key = KeyEvent.VK_N;
+				break;
+			case 'o':
+				key = KeyEvent.VK_O;
+				break;
+			case 'p':
+				key = KeyEvent.VK_P;
+				break;
+			case 'q':
+				key = KeyEvent.VK_Q;
+				break;
+			case 'r':
+				key = KeyEvent.VK_R;
+				break;
+			case 's':
+				key = KeyEvent.VK_S;
+				break;
+			case 't':
+				key = KeyEvent.VK_T;
+				break;
+			case 'u':
+				key = KeyEvent.VK_U;
+				break;
+			case 'v':
+				key = KeyEvent.VK_V;
+				break;
+			case 'w':
+				key = KeyEvent.VK_W;
+				break;
+			case 'x':
+				key = KeyEvent.VK_X;
+				break;
+			case 'y':
+				key = KeyEvent.VK_Y;
+				break;
+			case 'z':
+				key = KeyEvent.VK_Z;
+				break;
+			}
+		} catch (Exception e) {
+			new Logs().console().fail("Unable to fect the KeyEvent due to " + e.getMessage());
+			new Logs().file().fail("Unable to fect the KeyEvent due to " + e.getMessage());
+		}
+		return key;
+	}
+
+	/**
+	 * @param character
+	 * @return key
+	 * @throws AWTException
+	 */
+	public int getKeyEventDigit(Character character) {
+		int key = 0;
+		try {
+			switch (character) {
+			case '0':
+				key = KeyEvent.VK_A;
+				break;
+			case '1':
+				key = KeyEvent.VK_B;
+				break;
+			case '2':
+				key = KeyEvent.VK_C;
+				break;
+			case '3':
+				key = KeyEvent.VK_D;
+				break;
+			case '4':
+				key = KeyEvent.VK_E;
+				break;
+			case '5':
+				key = KeyEvent.VK_F;
+				break;
+			case '6':
+				key = KeyEvent.VK_G;
+				break;
+			case '7':
+				key = KeyEvent.VK_H;
+				break;
+			case '8':
+				key = KeyEvent.VK_I;
+				break;
+			case '9':
+				key = KeyEvent.VK_J;
+				break;
+			}
+		} catch (Exception e) {
+			new Logs().console().fail("Unable to fect the KeyEvent due to " + e.getMessage());
+			new Logs().file().fail("Unable to fect the KeyEvent due to " + e.getMessage());
+		}
+		return key;
+
+	}
+
+	/**
+	 * @throws
+	 * @param input
+	 */
+	public void typeKeys(String input) throws AWTException {
+		try {
+			for (int i = 0; i < input.length(); i++) {
+				if (Character.isUpperCase(input.charAt(i))) {
+					new Robot().keyPress(input.charAt(i));
+					new Robot().keyRelease(input.charAt(i));
+				}
+				if (Character.isLowerCase(input.charAt(i))) {
+					new Robot().keyPress(KeyEvent.VK_SHIFT);
+					new Robot().keyPress(getKeyEventLowerCase(input.charAt(i)));
+					new Robot().keyRelease(getKeyEventLowerCase(input.charAt(i)));
+					new Robot().keyRelease(KeyEvent.VK_SHIFT);
+				}
+				if (Character.isDigit(input.charAt(i))) {
+					new Robot().keyPress(getKeyEventDigit(input.charAt(i)));
+					new Robot().keyRelease(getKeyEventDigit(input.charAt(i)));
+				}
+
+			}
+		} catch (Exception e) {
+			new Logs().console().fail("Unable to type the Key due to " + e.getMessage());
+			new Logs().file().fail("Unable to type the Key due to " + e.getMessage());
+		}
+	}
+    
+	/**
+	 * presses ENTER
+	 * 
+	 */
+	public void pressEnter() throws AWTException {
+		try {
+			new Robot().keyPress(KeyEvent.VK_ENTER);
+			new Robot().keyRelease(KeyEvent.VK_ENTER);
+		} catch (Exception e) {
+			new Logs().console().fail("Unable to type the ENTER due to " + e.getMessage());
+			new Logs().file().fail("Unable to type the ENTER due to " + e.getMessage());
+		}
+	}
+	
+	/**
+	 * presses ESCAPE
+	 * 
+	 */
+	public void pressEscape() throws AWTException {
+		try {
+			new Robot().keyPress(KeyEvent.VK_ESCAPE);
+			new Robot().keyRelease(KeyEvent.VK_ESCAPE);
+		} catch (Exception e) {
+			new Logs().console().fail("Unable to type the ESCAPE due to " + e.getMessage());
+			new Logs().file().fail("Unable to type the ESCAPE due to " + e.getMessage());
+		}
+	}
+	
+	public void clickElementUsingJavascript(WebElement webelement, String element) {
+
+		try {
+			webelement.isDisplayed();
+        executeJavaScript("arguments[0].click();", webelement);
+		} catch (org.openqa.selenium.NoSuchElementException e) {
+			new Logs().console().fail(element + " is not identified due to " + e.getMessage());
+			new Logs().file().fail(element + " is not identified due to " + e.getMessage());
+		} catch (Exception e) {
+			new Logs().console().fail("Unable to click the" +  element  + " due to " + e.getMessage());
+			new Logs().file().fail("Unable to click the" +  element  + " due to " + e.getMessage());
+		}
+
+	}
+	
+	//Scrolling within a WebElement Vertically
+
+		public void scrollVertically(WebElement element, int ScrollBy) {
+			executeJavaScript("arguments[0].scrollBy(0, arguments[1])", element, ScrollBy);
+		}
+
+	//Scrolling within a WebElement Horizontally
+
+		public void scrollHorizontally(WebElement element, int ScrollBy) {
+
+			executeJavaScript("arguments[0].scrollBy(arguments[1], 0)", element, ScrollBy);
+		}
 
 }

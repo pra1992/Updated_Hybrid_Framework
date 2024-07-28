@@ -3,6 +3,7 @@ package com.web.app.framework.utlis.properties.objects;
 import org.aeonbits.owner.Config;
 import org.aeonbits.owner.ConfigFactory;
 
+@Config.Sources(value = {"file:${user.dir}/src/test/resources/ObjectsRepositories/SellerHomePage.properties"})
 public interface SellerHomePageElements extends Config {
 
 	@Key(value = "Options.tab")
@@ -118,5 +119,9 @@ public interface SellerHomePageElements extends Config {
 
 	@Key(value = "PhoneNoValue.grid")
 	String PhoneNoValue();
+	
+	@Key(value = "EditSuccessToaster.message")
+	String EditSuccessToaster();
+	
 
 }

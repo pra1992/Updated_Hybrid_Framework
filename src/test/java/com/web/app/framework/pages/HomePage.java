@@ -1,46 +1,53 @@
 package com.web.app.framework.pages;
 
 import org.aeonbits.owner.ConfigFactory;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
+import com.web.app.framework.utlis.general.WaitUtils;
 import com.web.app.framework.utlis.properties.objects.HomePageElements;
 import com.web.app.selenium.api.design.Locators;
 import com.web.app.testng.api.TestNGHooks;
 
-public class HomePage extends TestNGHooks{
+public class HomePage extends TestNGHooks {
 	HomePageElements home = ConfigFactory.create(HomePageElements.class);
-	
-	public HomePage clickToggle() {
-		getWait().until(ExpectedConditions.visibilityOf(locateElement(Locators.XPATH, home.toggle())));
-		click(locateElement(Locators.XPATH, home.toggle()));
-	 return this;
-	}
-	
-	public HomePage verifyandclickViewAll() {
-		executeJavaScript("arguments[0].click();", locateElement(Locators.XPATH, home.viewAll()));
-		return this;
-}
 
-	//4. Click Option from App Launcher
-		public DashboardPage AppLaucherOption(String AppLauncherOption) {
-			checkWindowHandles();
-			switch (AppLauncherOption.toLowerCase()) {	
-			case  "sales":
-				clickUsingActions(locateElement(Locators.XPATH, home.sales()));
-			   break;
-			case "service console":
-				clickUsingActions(locateElement(Locators.XPATH, home.serviceconsole()));
-				break;
-			}
-			return new DashboardPage();		
+	// Identifying WenElements in the Page
+	WebElement btnToggle = locateElement(Locators.XPATH, home.toggle());
+	WebElement btnViewAll = locateElement(Locators.XPATH, home.viewAll());
+	WebElement btnServiceConsole = locateElement(Locators.XPATH, home.serviceconsole());
+	WebElement btnSales = locateElement(Locators.XPATH, home.sales());
+
+	public HomePage clickToggle() {
+		new WaitUtils().waitForElementToBeVisible(btnToggle);
+		click(btnToggle);
+		return this;
+	}
+
+	public HomePage verifyandclickViewAll() {
+		clickElementUsingJavascript(btnViewAll, "View All Button");
+		return this;
+	}
+
+	// 4. Click Option from App Launcher
+	public DashboardPage AppLaucherOption(String AppLauncherOption) {
+		checkWindowHandles();
+		switch (AppLauncherOption.toLowerCase()) {
+		case "sales":
+			clickUsingActions(btnSales);
+			break;
+		case "service console":
+			clickUsingActions(btnServiceConsole);
+			break;
 		}
-	
-		
-		 //Verify user logged in successfully
-		
-		public HomePage verifyLoginIsSuccess() {
-			getWait().until(ExpectedConditions.titleContains("Home | Salesforce"));
-			verifyTitle("Home | Salesforce");
-			return this;
-		}
+		return new DashboardPage();
+	}
+
+	// Verify user logged in successfully
+
+	public HomePage verifyLoginIsSuccess() {
+		new WaitUtils().waitForTitleOfPage("Home | Salesforce");
+		verifyTitle("Home | Salesforce");
+		return this;
+	}
 }
