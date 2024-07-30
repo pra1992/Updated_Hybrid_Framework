@@ -11,6 +11,9 @@ import java.util.List;
 import java.util.Set;
 
 import org.aeonbits.owner.ConfigFactory;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.ElementClickInterceptedException;
@@ -39,7 +42,8 @@ import com.web.app.selenium.api.design.Locators;
 public class SeleniumBase extends DriverInstance implements Browser, Element {
 
 	private static final ConfigPropertiesHandler config = ConfigFactory.create(ConfigPropertiesHandler.class);
-
+	public static List<DateTime> dates = null;
+	 public static String downloadDir= null;
 	@Override
 	public void executeJavaScript(String js, WebElement ele) {
 		getDriver().executeScript(js, ele);
@@ -1188,5 +1192,20 @@ public class SeleniumBase extends DriverInstance implements Browser, Element {
 
 			executeJavaScript("arguments[0].scrollBy(arguments[1], 0)", element, ScrollBy);
 		}
+		// Convert Date to a specified Format
+
+		public DateTime convertDateToSpecifiedFormat(String InputDate) {
+			DateTime ResultDate = null;
+			try {
+				DateTimeFormatter format = DateTimeFormat.forPattern("dd/MM/yyyy hh:mm a");
+				ResultDate = format.parseDateTime(InputDate);
+			} catch (Exception e) {
+			//	Assertion.assertFail("Unable to fetch the date due to" + e);
+			}
+			return ResultDate;
+		}
+		
+		
+		
 
 }
