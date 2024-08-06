@@ -20,7 +20,7 @@ public interface Browser {
 	 * @author TestLeaf Team
 	 * @throws SessionNotCreatedException, ConnectionClosedException, UnreachableBrowserException, NoSuchDriverException, Exception 
 	 */	
-	public void startApp(String url);
+	public void startApp(String url, String image);
 	
 	/**
 	 * This method will launch the browser which is mentioned in waf-config.properties file  

@@ -22,6 +22,7 @@ import org.openqa.selenium.NoAlertPresentException;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.NoSuchFrameException;
 import org.openqa.selenium.NoSuchWindowException;
+import org.openqa.selenium.OutputType;
 import org.openqa.selenium.SessionNotCreatedException;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebElement;
@@ -34,6 +35,7 @@ import org.openqa.selenium.support.ui.Select;
 import org.testng.Assert;
 
 import com.web.app.framework.utlis.general.Logs;
+import com.web.app.framework.utlis.general.Reporter;
 import com.web.app.framework.utlis.properties.ConfigPropertiesHandler;
 import com.web.app.selenium.api.design.Browser;
 import com.web.app.selenium.api.design.Element;
@@ -55,10 +57,12 @@ public class SeleniumBase extends DriverInstance implements Browser, Element {
 
 
 	@Override
-	public void click(WebElement ele) {
+	public void click(WebElement ele, String image) {
 		try {
 			ele.click();
+			Reporter.pass("Able to click the " + ele);
 		} catch (ElementClickInterceptedException e) {
+			Reporter.fail("Unable to click the " + ele + "due to" + e, image);
 			new Logs().console().info(
 					"The exception is usually thrown when an attempt to click on an element on a web page is intercepted or blocked by another element. "
 							+ e.toString());
@@ -68,6 +72,7 @@ public class SeleniumBase extends DriverInstance implements Browser, Element {
 			executeJavaScript("arguments[0].scrollIntoView();", ele);
 			ele.click();
 		} catch (Exception e) {
+			Reporter.fail("Unable to click the " + ele + "due to" + e, image);
 			new Logs().console()
 					.fail("Unable to click the given " + ele.toString() + " webelement. Due to --> " + e.toString());
 			new Logs().file()
@@ -77,10 +82,12 @@ public class SeleniumBase extends DriverInstance implements Browser, Element {
 		}
 	}
 
-	public void clickUsingActions(WebElement ele) {
+	public void clickUsingActions(WebElement ele , String image) {
 		try {
 			new Actions(getDriver()).moveToElement(ele).click().build().perform();
+			Reporter.pass("Able to click the " + ele + "using Actions");
 		} catch (ElementClickInterceptedException e) {
+			Reporter.fail("Unable to click " + ele + "through Actions due to " + e, image);
 			new Logs().console().info(
 					"The exception is usually thrown when an attempt to click on an element on a web page is intercepted or blocked by another element. "
 							+ e.toString());
@@ -90,6 +97,7 @@ public class SeleniumBase extends DriverInstance implements Browser, Element {
 			executeJavaScript("arguments[0].scrollIntoView();", ele);
 			ele.click();
 		} catch (Exception e) {
+			Reporter.fail("Unable to click " + ele + "through Actions due to " + e, image);
 			new Logs().console()
 					.fail("Unable to click the given " + ele.toString() + " webelement. Due to --> " + e.toString());
 			new Logs().file()
@@ -99,11 +107,12 @@ public class SeleniumBase extends DriverInstance implements Browser, Element {
 		}
 	}
 
-	public void scrollToElement(WebElement ele) {
+	public void scrollToElement(WebElement ele, String image) {
 		try {
 			new Actions(getDriver()).moveToElement(ele).build().perform();
-
+			Reporter.pass("Able to scroll to the " + ele + "using Actions"); 
 		} catch (Exception e) {
+			Reporter.fail("Unable to scroll to " + ele + "through Actions due to " + e, image);
 			new Logs().console()
 					.fail("Unable to move to the given " + ele.toString() + " webelement. Due to --> " + e.toString());
 			new Logs().file()
@@ -114,24 +123,30 @@ public class SeleniumBase extends DriverInstance implements Browser, Element {
 	}
 
 	@Override
-	public void append(WebElement ele, String data) {
+	public void append(WebElement ele, String data, String image) {
 		getWait().until(ExpectedConditions.visibilityOf(ele));
+		
 		try {
 			ele.sendKeys(data);
 			new Logs().console().pass("Able to append the text to the " + ele.toString());
+			Reporter.pass("Able to append the Text to the " + ele.getText().trim());
+			
 		} catch (Exception e) {
+			Reporter.fail("Unable to append the text  to " + ele.getText() + "due to " + e, image);
 			new Logs().console().fail("Unable to append the text due to " + e.getMessage());
 			new Logs().file().fail("Unable to append the text due to " + e.getMessage());
 			throw new RuntimeException("Unable to append the text due to " + e.getMessage());
 		}
 	}
 
-	public void append(WebElement ele, Keys key) {
+	public void append(WebElement ele, Keys key, String image) {
 		getWait().until(ExpectedConditions.visibilityOf(ele));
 		try {
 			ele.sendKeys(key);
+			Reporter.pass("Able to enter the" +  key + "to the " + ele.getText().trim());
 			new Logs().console().pass("Able to press the Key into the " + ele.toString());
 		} catch (Exception e) {
+			Reporter.fail("Unable to enter the " + key + "due to " + e, image);
 			new Logs().console().fail("Unable to press the Key into the " + e.getMessage());
 			new Logs().file().fail("Unable to press the Key into the" + e.getMessage());
 			throw new RuntimeException("Unable to press the Key into the " + e.getMessage());
@@ -139,12 +154,14 @@ public class SeleniumBase extends DriverInstance implements Browser, Element {
 	}
 
 	@Override
-	public void clear(WebElement ele) {
+	public void clear(WebElement ele, String image) {
 		getWait().until(ExpectedConditions.visibilityOf(ele));
 		try {
 			ele.clear();
+			Reporter.pass("Able to clear " + ele.getText().trim());
 			new Logs().console().pass("Able to clear the text");
 		} catch (Exception e) {
+			Reporter.fail("Unable to clear the text in " + ele.getText() + "due to " + e, image);
 			new Logs().console().fail("Unable to clear the text due to " + e.getMessage());
 			new Logs().file().fail("Unable to clear the text due to " + e.getMessage());
 			throw new RuntimeException("Unable to clear the text due to " + e.getMessage());
@@ -152,13 +169,15 @@ public class SeleniumBase extends DriverInstance implements Browser, Element {
 	}
 
 	@Override
-	public void clearAndType(WebElement ele, String data) {
+	public void clearAndType(WebElement ele, String data, String image) {
 		getWait().until(ExpectedConditions.visibilityOf(ele));
 		try {
 			ele.clear();
 			ele.sendKeys(data);
+			Reporter.pass("Able to clear and type in " + ele.getText());
 			new Logs().console().pass("Able to clear and type the text");
 		} catch (Exception e) {
+			Reporter.fail("Unable to clear and type in " + ele.getText() + "due to " + e, image);
 			new Logs().console().fail("Unable to clear and type the text due to " + e.getMessage());
 			new Logs().file().fail("Unable to clear and type the text due to " + e.getMessage());
 			throw new RuntimeException("Unable to clear and type the text due to " + e.getMessage());
@@ -167,13 +186,15 @@ public class SeleniumBase extends DriverInstance implements Browser, Element {
 	}
 
 	@Override
-	public String getElementText(WebElement ele) {
+	public String getElementText(WebElement ele, String image) {
 		String text = null;
 		getWait().until(ExpectedConditions.visibilityOf(ele));
 		try {
 			ele.getText().trim();
+			Reporter.pass("Able to get the element text from " + ele.getText());
 			new Logs().console().pass("Able to extract the text from" + ele.toString());
 		} catch (Exception e) {
+			Reporter.fail("Unable to get the text from " + ele.getText() + "due to " + e, image);
 			new Logs().console().fail("Unable to extract the text due to " + e.getMessage());
 			new Logs().file().fail("Unable to extract the text due to " + e.getMessage());
 			throw new RuntimeException("Unable to extract the text due to " + e.getMessage());
@@ -183,7 +204,7 @@ public class SeleniumBase extends DriverInstance implements Browser, Element {
 	}
 
 	@Override
-	public String getBackgroundColor(WebElement ele) {
+	public String getBackgroundColor(WebElement ele, String image) {
 		getWait().until(ExpectedConditions.visibilityOf(ele));
 		try {
 			String rgba = ele.getCssValue("background-color");
@@ -194,14 +215,17 @@ public class SeleniumBase extends DriverInstance implements Browser, Element {
 					B[i] = Integer.parseInt(A[i].trim());
 				}
 				String hex = String.format("#%02x%02x%02x", B[0], B[1], B[2]);
+				Reporter.pass("Able to get the background color  from " + ele.getText());
 				return hex;
 			} else {
 
 				return rgba;
 			}
+			
 		} catch (Exception e) {
 			new Logs().console().fail("Unable to extract the background colour due to " + e.getMessage());
 			new Logs().file().fail("Unable to extract the background colour due to " + e.getMessage());
+			Reporter.fail("Unable to get the background color from " + ele.getText() + "due to " + e, image);
 			throw new RuntimeException("Unable to extract the background colour due to " + e.getMessage());
 
 		}
@@ -209,29 +233,33 @@ public class SeleniumBase extends DriverInstance implements Browser, Element {
 	}
 
 	@Override
-	public String getTypedText(WebElement ele, String attributeValue) {
+	public String getTypedText(WebElement ele, String attributeValue, String image) {
 		String text = null;
 		getWait().until(ExpectedConditions.visibilityOf(ele));
 		try {
 			text = ele.getAttribute(attributeValue);
+			Reporter.pass("Able to get the typed text from " + ele.getText());
 			new Logs().console().pass("Able to extract the text from" + ele.toString());
 		} catch (Exception e) {
-			new Logs().console().fail("Unable to extract the attribute value due to " + e.getMessage());
+			new Logs().console().fail("Unable to get the typed text due to " + e.getMessage());
 			new Logs().file().fail("Unable to extract the attribute value colour due to " + e.getMessage());
+			Reporter.fail("Unable to get the typed text from " + ele.getText() + "due to " + e, image);
 			throw new RuntimeException("Unable to extract the attribute value  due to " + e.getMessage());
 		}
 		return text;
 	}
 
 	@Override
-	public void selectDropDownUsingText(WebElement ele, String value) {
+	public void selectDropDownUsingText(WebElement ele, String value, String image) {
 		getWait().until(ExpectedConditions.visibilityOf(ele));
 		getWait().until(ExpectedConditions.elementToBeClickable(ele));
 		try {
 			ele.click();
 			new Select(ele).selectByVisibleText(value);
+			Reporter.pass("Able to select the value from dropdown " + ele.getText());
 			new Logs().console().pass("Able to select the " + value + "from" + ele.toString());
 		} catch (Exception e) {
+			Reporter.fail("Unable to select the dropdown value from text from " + ele.getText() + "due to " + e, image);
 			new Logs().console().fail("Unable to select the dropdown value due to " + e.getMessage());
 			new Logs().file().fail("Unable to select the dropdown value due to " + e.getMessage());
 			throw new RuntimeException("Unable to select the dropdown value  due to " + e.getMessage());
@@ -239,14 +267,16 @@ public class SeleniumBase extends DriverInstance implements Browser, Element {
 	}
 
 	@Override
-	public void selectDropDownUsingIndex(WebElement ele, int index) {
+	public void selectDropDownUsingIndex(WebElement ele, int index, String image) {
 		getWait().until(ExpectedConditions.visibilityOf(ele));
 		getWait().until(ExpectedConditions.elementToBeClickable(ele));
 		try {
 			ele.click();
 			new Select(ele).selectByIndex(index);
+			Reporter.pass("Able to select the value from dropdown using index " + ele.getText());
 			new Logs().console().pass("Able to select the value from " + index + "from" + ele.toString());
 		} catch (Exception e) {
+			Reporter.fail("Unable to select the dropdown value from index due to " + ele.getText() + "due to " + e, image);
 			new Logs().console().fail("Unable to select the dropdown value due to " + e.getMessage());
 			new Logs().file().fail("Unable to select the dropdown value due to " + e.getMessage());
 			throw new RuntimeException("Unable to select the dropdown value  due to " + e.getMessage());
@@ -254,14 +284,16 @@ public class SeleniumBase extends DriverInstance implements Browser, Element {
 	}
 
 	@Override
-	public void selectDropDownUsingValue(WebElement ele, String value) {
+	public void selectDropDownUsingValue(WebElement ele, String value, String image) {
 		getWait().until(ExpectedConditions.visibilityOf(ele));
 		getWait().until(ExpectedConditions.elementToBeClickable(ele));
 		try {
 			ele.click();
 			new Select(ele).selectByValue(value);
+			Reporter.pass("Able to select the dropdown with value " + ele.getText());
 			new Logs().console().pass("Able to select the value from " + value + "from" + ele.toString());
 		} catch (Exception e) {
+			Reporter.fail("Unable to select the dropdown value from value due to " + ele.getText() + "due to " + e, image);
 			new Logs().console().fail("Unable to select the dropdown value due to " + e.getMessage());
 			new Logs().file().fail("Unable to select the dropdown value due to " + e.getMessage());
 			throw new RuntimeException("Unable to select the dropdown value  due to " + e.getMessage());
@@ -269,15 +301,18 @@ public class SeleniumBase extends DriverInstance implements Browser, Element {
 	}
 
 	@Override
-	public boolean verifyExactText(WebElement ele, String expectedText) {
+	public boolean verifyExactText(WebElement ele, String expectedText, String image) {
 		getWait().until(ExpectedConditions.visibilityOf(ele));
 		boolean flag = false;
 		try {
 			if (ele.getText().trim().equalsIgnoreCase(expectedText)) {
 				flag = true;
+				Reporter.pass("Expected Text equals Actual Text");
 				new Logs().console().pass("The text on the " + ele.toString() + "meets the " + expectedText);
 			}
 		} catch (Exception e) {
+			
+			Reporter.fail("Expected Text not equal actuat text due to " + ele.getText(), image);
 			new Logs().console().fail("The text on the " + ele.toString() + " does not meets the " + expectedText
 					+ "due to" + e.getMessage());
 			new Logs().file().fail("The text on the " + ele.toString() + " does not meets the " + expectedText
@@ -289,15 +324,17 @@ public class SeleniumBase extends DriverInstance implements Browser, Element {
 	}
 
 	@Override
-	public boolean verifyPartialText(WebElement ele, String expectedText, String Value) {
+	public boolean verifyPartialText(WebElement ele, String expectedText, String Value, String image) {
 		getWait().until(ExpectedConditions.visibilityOf(ele));
 		boolean flag = false;
 		try {
 			if (ele.getText().trim().contains(expectedText)) {
 				flag = true;
 				new Logs().console().pass("The text on the " + Value + ele.toString() + "meets the " + expectedText);
+				Reporter.pass("Expected Text contains Actual Partial Text in " + ele.getText());
 			}
 		} catch (Exception e) {
+			Reporter.fail("Expected Text not contains actual partial text due to " + ele.getText(), image);
 			new Logs().console().fail("The text on the " + Value + ele.toString() + " does not meets the partial "
 					+ expectedText + "due to" + e.getMessage());
 			new Logs().file().fail("The text on the " + Value + ele.toString() + " does not meets the partial "
@@ -309,15 +346,17 @@ public class SeleniumBase extends DriverInstance implements Browser, Element {
 	}
 
 	@Override
-	public boolean verifyExactAttribute(WebElement ele, String attribute, String value) {
+	public boolean verifyExactAttribute(WebElement ele, String attribute, String value, String image) {
 		getWait().until(ExpectedConditions.visibilityOf(ele));
 		boolean flag = false;
 		try {
 			if (ele.getAttribute(attribute).trim().equals(value)) {
 				flag = true;
 				new Logs().console().pass("The text on the " + attribute + ele.toString() + "meets the " + value);
+				Reporter.pass(attribute + "has the expected " + value);
 			}
 		} catch (Exception e) {
+			Reporter.fail(attribute + "not having the expected " + value + "due to" + e, image);
 			new Logs().console().fail("The text on the " + attribute + ele.toString() + " does not meets the " + value
 					+ "due to" + e.getMessage());
 			new Logs().file().fail("The text on the " + attribute + ele.toString() + " does not meets the " + value
@@ -329,15 +368,17 @@ public class SeleniumBase extends DriverInstance implements Browser, Element {
 	}
 
 	@Override
-	public boolean verifyPartialAttribute(WebElement ele, String attribute, String value) {
+	public boolean verifyPartialAttribute(WebElement ele, String attribute, String value, String image) {
 		getWait().until(ExpectedConditions.visibilityOf(ele));
 		boolean flag = false;
 		try {
 			if (ele.getAttribute(attribute).trim().contains(value)) {
 				flag = true;
 				new Logs().console().pass("The text on the " + attribute + ele.toString() + "meets the " + value);
+				Reporter.pass("Partial Attribute is verified");
 			}
 		} catch (Exception e) {
+			Reporter.fail("Unable to verify the partial Attribute of a " + ele.getText() + "due to " + e,  image);
 			new Logs().console().fail("The text on the " + attribute + ele.toString() + " does not meets the partial "
 					+ value + "due to" + e.getMessage());
 			new Logs().file().fail("The text on the " + attribute + ele.toString() + " does not meets the partial "
@@ -350,15 +391,17 @@ public class SeleniumBase extends DriverInstance implements Browser, Element {
 	}
 
 	@Override
-	public boolean verifyDisplayed(WebElement ele) {
+	public boolean verifyDisplayed(WebElement ele, String image) {
 		boolean flag = false;
 		getWait().until(ExpectedConditions.visibilityOf(ele));
 		try {
 			if (ele.isDisplayed()) {
 				flag = true;
 				new Logs().console().pass(ele.toString() + "is displayed");
+				Reporter.pass("element is displayed " + ele.getText());
 			}
 		} catch (Exception e) {
+			Reporter.fail(ele.getText()+" is not displayed", image);
 			new Logs().console().fail(ele.toString() + "is not displayed due to " + e.toString());
 			new Logs().file().fail(ele.toString() + "is not displayed due to " + e.toString());
 			throw new RuntimeException(ele.toString() + "is not displayed due to " + e.toString());
@@ -368,15 +411,17 @@ public class SeleniumBase extends DriverInstance implements Browser, Element {
 	}
 
 	@Override
-	public boolean verifyDisappeared(WebElement ele) {
+	public boolean verifyDisappeared(WebElement ele, String image) {
 		boolean flag = false;
 		getWait().until(ExpectedConditions.invisibilityOf(ele));
 		try {
 			if (!ele.isDisplayed()) {
 				flag = true;
 				new Logs().console().pass(ele.toString() + "is not displayed");
+				Reporter.pass(ele.getText() + "is not displayed");
 			}
 		} catch (Exception e) {
+			Reporter.fail(ele.getText() + "is not disaapeared", image);
 			new Logs().console().fail(ele.toString() + "unable to verify due to " + e.toString());
 			new Logs().file().fail(ele.toString() + "unable to verify due to " + e.toString());
 			throw new RuntimeException(ele.toString() + "unable to verify due to " + e.toString());
@@ -386,15 +431,17 @@ public class SeleniumBase extends DriverInstance implements Browser, Element {
 	}
 
 	@Override
-	public boolean verifyEnabled(WebElement ele) {
+	public boolean verifyEnabled(WebElement ele, String image) {
 		boolean flag = false;
 		getWait().until(ExpectedConditions.visibilityOf(ele));
 		try {
 			if (ele.isEnabled()) {
 				flag = true;
 				new Logs().console().pass(ele.toString() + "is enabled");
+				Reporter.pass(ele.getText() + "is enabled");
 			}
 		} catch (Exception e) {
+			Reporter.fail(ele.getText() + "is not enabled due to " + e, image);
 			new Logs().console().fail(ele.toString() + "is not enabled due to " + e.toString());
 			new Logs().file().fail(ele.toString() + "is not enabled due to " + e.toString());
 			throw new RuntimeException(ele.toString() + "is not enabled due to " + e.toString());
@@ -403,15 +450,17 @@ public class SeleniumBase extends DriverInstance implements Browser, Element {
 	}
 
 	@Override
-	public boolean verifySelected(WebElement ele) {
+	public boolean verifySelected(WebElement ele, String image) {
 		boolean flag = false;
 		getWait().until(ExpectedConditions.visibilityOf(ele));
 		try {
 			if (ele.isSelected()) {
 				flag = true;
 				new Logs().console().pass(ele.toString() + "is selected");
+				Reporter.pass(ele.getText() + "is selected");
 			}
 		} catch (Exception e) {
+			Reporter.fail(ele.getText() + "is not selected", image);
 			new Logs().console().fail(ele.toString() + "is not selected due to " + e.toString());
 			new Logs().file().fail(ele.toString() + "is not selected due to " + e.toString());
 			throw new RuntimeException(ele.toString() + "is not selected due to " + e.toString());
@@ -420,39 +469,44 @@ public class SeleniumBase extends DriverInstance implements Browser, Element {
 	}
 
 	@Override
-	public void startApp(String url) {
+	public void startApp(String url, String image) {
 		try {
 			setDriver("chrome", false);
 			getDriver().get(url);
 			new Logs().console().pass("Successfully opened " + url + " application under test in the chrome browser.");
 			new Logs().file().pass("Successfully opened " + url + " application under test in the chrome browser.");
 			getDriver().manage().timeouts().implicitlyWait(Duration.ofSeconds(config.getImplicitWaitTime()));
+			Reporter.pass(url + "able to successfully launch");
 			new Logs().console().pass("Implicit wait time set to " + config.getImplicitWaitTime() + " seconds.");
 			new Logs().file().pass("Implicit wait time set to " + config.getImplicitWaitTime() + " seconds.");
-		} catch (SessionNotCreatedException sne) {
-			new Logs().console().fail("A new session could not be successfully created. Due to --> " + sne.toString());
-			new Logs().file().fail("A new session could not be successfully created. Due to --> " + sne.toString());
-		} catch (ConnectionClosedException cce) {
-			new Logs().console().fail("The Driver Connection got lost. Due to --> " + cce.toString());
-			new Logs().file().fail("The Driver Connection got lost. Due to --> " + cce.toString());
-			throw new RuntimeException("The Driver Connection got lost. Due to --> " + cce.toString());
-		} catch (UnreachableBrowserException ube) {
+		} catch (SessionNotCreatedException e) {
+			Reporter.fail("Unable to launch the" + url + "due to" + e , image);
+			new Logs().console().fail("A new session could not be successfully created. Due to --> " + e.toString());
+			new Logs().file().fail("A new session could not be successfully created. Due to --> " + e.toString());
+		} catch (ConnectionClosedException e) {
+			Reporter.fail("Unable to launch the" + url + "due to" + e , image);
+			new Logs().console().fail("The Driver Connection got lost. Due to --> " + e.toString());
+			new Logs().file().fail("The Driver Connection got lost. Due to --> " + e.toString());
+			throw new RuntimeException("The Driver Connection got lost. Due to --> " + e.toString());
+		} catch (UnreachableBrowserException e) {
+			Reporter.fail("Unable to launch the" + url + "due to" + e , image);
 			new Logs().console()
-					.fail("The chrome browser is unable to be opened or has crashed because of " + ube.toString());
+					.fail("The chrome browser is unable to be opened or has crashed because of " + e.toString());
 			new Logs().file()
-					.fail("The chrome browser is unable to be opened or has crashed because of " + ube.toString());
+					.fail("The chrome browser is unable to be opened or has crashed because of " + e.toString());
 			throw new RuntimeException(
-					"The chrome browser is unable to be opened or has crashed because of " + ube.toString());
-		} catch (NoSuchDriverException nde) {
+					"The chrome browser is unable to be opened or has crashed because of " + e.toString());
+		} catch (NoSuchDriverException e) {
+			Reporter.fail("Unable to launch the" + url + "due to" + e , image);
 			new Logs().console().fail(
 					"Unable to find chrome driver in the local machine and, Now trying to set driver by webdriver manager class. "
-							+ nde.toString());
+							+ e.toString());
 			new Logs().file().fail(
 					"Unable to find chrome driver in the local machine and, Now trying to set driver by webdriver manager class. "
-							+ nde.toString());
+							+ e.toString());
 			System.out.println(
 					"Unable to find chrome driver in the local machine and, Now trying to set driver by webdriver manager class. "
-							+ nde.toString());
+							+ e.toString());
 		} catch (Exception e) {
 			new Logs().console().fail("Unable to launch given chrome browser. Due to --> " + e.toString());
 			new Logs().file().fail("Unable to launch given chrome browser. Due to --> " + e.toString());
@@ -1204,6 +1258,17 @@ public class SeleniumBase extends DriverInstance implements Browser, Element {
 			}
 			return ResultDate;
 		}
+		
+		public String takeSnapshot() {
+			return getDriver().getScreenshotAs(OutputType.BASE64);
+		}
+
+		@Override
+		public String getTypedText(WebElement ele, String attributeValue) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+		
 		
 		
 		

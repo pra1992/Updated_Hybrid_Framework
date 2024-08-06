@@ -16,7 +16,6 @@
 			<artifactId>selenium-java</artifactId>
 			<version>${selenium.java.version}</version>
 		</dependency>
-		<!-- testng -->
 		<dependency>
 			<groupId>org.testng</groupId>
 			<artifactId>testng</artifactId>
@@ -27,7 +26,7 @@
 			<groupId>org.aeonbits.owner</groupId>
 			<artifactId>owner</artifactId>
 			<version>${owner.version}</version>
-		</dependency>
+		</dependency>		
 		<!-- commons-io -->
 		<dependency>
 			<groupId>commons-io</groupId>
@@ -38,6 +37,11 @@
     <groupId>joda-time</groupId>
     <artifactId>joda-time</artifactId>
     <version>2.12.7</version>
+</dependency>
+<dependency>
+    <groupId>com.aventstack</groupId>
+    <artifactId>extentreports</artifactId>
+    <version>5.1.2</version>
 </dependency>
 	</dependencies>
 </project>

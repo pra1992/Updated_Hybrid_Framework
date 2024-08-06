@@ -22,7 +22,7 @@ public interface Element {
 	 * @author TestLeaf Team
 	 * @throws StaleElementReferenceException
 	 */
-	void click(WebElement ele);
+	void click(WebElement ele, String image);
 	
 	
 	/**
@@ -33,7 +33,7 @@ public interface Element {
 	 * @author TestLeaf Team
 	 * @throws ElementNotInteractable,IllegalArgumentException(throws if keysToSend is null)	
 	 */
-	 void append(WebElement ele, String data);
+	 void append(WebElement ele, String data, String image);
 	
 	/**
 	 * This method will clear the value in the given text field 
@@ -42,7 +42,7 @@ public interface Element {
 	 * @author TestLeaf Team
 	 * @throws InvalidElementStateException	(throws if not user-editable element)	 
 	 */
-	 void clear(WebElement ele);
+	 void clear(WebElement ele, String image);
 	
 	/**
 	 * This method will clear and type the value in the given text field 
@@ -52,7 +52,7 @@ public interface Element {
 	 * @author TestLeaf Team
 	 * @throws ElementNotInteractable,IllegalArgumentException(throws if keysToSend is null)		 
 	 */
-	 void clearAndType(WebElement ele,String data);
+	 void clearAndType(WebElement ele,String data, String image);
 	
 	/**
 	 * This method will get the visible text of the element
@@ -60,7 +60,7 @@ public interface Element {
 	 * @author TestLeaf Team
 	 * @see locateElement method in Browser Class
 	 */
-	 String getElementText(WebElement ele);	
+	 String getElementText(WebElement ele, String image);	
 	
 	/**
 	 * This method will get the Color values of the element
@@ -69,7 +69,7 @@ public interface Element {
 	 * @author TestLeaf Team
 	 * @return The visible text of this element.
 	 */
-	 String getBackgroundColor(WebElement ele);
+	 String getBackgroundColor(WebElement ele, String image);
 	
 	/**
 	 * This method will get the text of the element textbox
@@ -78,7 +78,7 @@ public interface Element {
 	 * @author TestLeaf Team
 	 * @return The attribute/property's current value (or) null if the value is not set.
 	 */
-	 String getTypedText(WebElement ele , String attribute);
+	 String getTypedText(WebElement ele , String attribute, String image);
 	
 
 	/**
@@ -89,7 +89,7 @@ public interface Element {
 	 * @author TestLeaf Team
 	 * @throws NoSuchElementException
 	 */
-	 void selectDropDownUsingText(WebElement ele, String value) ;
+	 void selectDropDownUsingText(WebElement ele, String value, String image) ;
 	
 	/**
 	 * This method will select the drop down using index
@@ -99,7 +99,7 @@ public interface Element {
 	 * @author Babu - TestLeaf
 	 * @throws NoSuchElementException
 	 */
-	 void selectDropDownUsingIndex(WebElement ele, int index) ;
+	 void selectDropDownUsingIndex(WebElement ele, int index, String image) ;
 	
 	/**
 	 * This method will select the drop down using index
@@ -109,7 +109,7 @@ public interface Element {
 	 * @author TestLeaf Team
 	 * @throws NoSuchElementException
 	 */
-	 void selectDropDownUsingValue(WebElement ele, String value) ;
+	 void selectDropDownUsingValue(WebElement ele, String value, String image) ;
 	
 	/**
 	 * This method will verify exact given text with actual text on the given element
@@ -119,7 +119,7 @@ public interface Element {
 	 * @see locateElement method in Browser Class
 	 * @return true if the given object represents a String equivalent to this string, false otherwise
 	 */
-	 boolean verifyExactText(WebElement ele, String expectedText);
+	 boolean verifyExactText(WebElement ele, String expectedText, String image);
 	
 	/**
 	 * This method will verify given text contains actual text on the given element
@@ -129,7 +129,7 @@ public interface Element {
 	 * @see locateElement method in Browser Class
 	 * @return true if this String represents the same sequence of characters as the specified string, false otherwise
 	 */
-	 boolean verifyPartialText(WebElement ele, String expectedText, String Value);
+	 boolean verifyPartialText(WebElement ele, String expectedText, String Value, String image);
 
 	/**
 	 * This method will verify exact given attribute's value with actual value on the given element
@@ -140,7 +140,7 @@ public interface Element {
 	 * @see locateElement method in Browser Class
 	 * @return true if this String represents the same sequence of characters as the specified value, false otherwise
 	 */
-	 boolean verifyExactAttribute(WebElement ele, String attribute, String value);
+	 boolean verifyExactAttribute(WebElement ele, String attribute, String value, String image);
 	
 	/**
 	 * This method will verify partial given attribute's value with actual value on the given element
@@ -152,7 +152,7 @@ public interface Element {
 	 * @return true if this String represents the same sequence of characters as the specified value, false otherwise
 	 * 
 	 */
-	 boolean verifyPartialAttribute(WebElement ele, String attribute, String value);
+	 boolean verifyPartialAttribute(WebElement ele, String attribute, String value, String image);
 	
 	/**
 	 * This method will verify if the element is visible in the DOM
@@ -161,7 +161,7 @@ public interface Element {
 	 * @see locateElement method in Browser Class
 	 * @return true if the element is displayed or false otherwise
 	 */
-	 boolean verifyDisplayed(WebElement ele);
+	 boolean verifyDisplayed(WebElement ele, String image);
 	
 	/**
 	 * This method will checking the element to be invisible
@@ -169,7 +169,7 @@ public interface Element {
 	 * @author TestLeaf Team
 	 * @see locateElement method in Browser Class
 	 */
-	 boolean verifyDisappeared(WebElement ele);	
+	 boolean verifyDisappeared(WebElement ele, String image);	
 	
 	/**
 	 * This method will verify if the input element is Enabled
@@ -179,7 +179,7 @@ public interface Element {
 	 * @see locateElement method in Browser Class
 	 * @return True if the element is enabled, false otherwise.
 	 */
-	 boolean verifyEnabled(WebElement ele);	
+	 boolean verifyEnabled(WebElement ele, String image);	
 	
 	/**
 	 * This method will verify if the element (Radio button, Checkbox) is selected
@@ -188,6 +188,6 @@ public interface Element {
 	 * @see locateElement method in Browser Class
 	 * @return True if the element is currently selected or checked, false otherwise.
 	 */
-	 boolean verifySelected(WebElement ele);
+	 boolean verifySelected(WebElement ele, String image);
 
 }
