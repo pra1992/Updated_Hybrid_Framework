@@ -50,7 +50,7 @@ public interface Browser {
 	 * @throws NoSuchElementException
 	 * @return The first matching element on the current context.
 	 */
-	public WebElement locateElement(Locators locatorType, String value);	
+	public WebElement locateElement(Locators locatorType, String value, String image);	
 	
 	/**
 	 * This method will locate the element using id
@@ -59,7 +59,7 @@ public interface Browser {
 	 * @throws NoSuchElementException
 	 * @return The first matching element on the current context.
 	 */
-	public List<WebElement> locateElements(Locators locatorType, String value);	
+	public List<WebElement> locateElements(Locators locatorType, String value, String image);	
 	
 	/**
 	 * This method will switch to the Alert
@@ -72,21 +72,21 @@ public interface Browser {
 	 * @author TestLeaf Team
 	 * @throws NoAlertPresentException
 	 */
-	public void acceptAlert();
+	public void acceptAlert(String image);
 	
 	/**
 	 * This method will dismiss the alert opened
 	 * @author TestLeaf Team
 	 * @throws NoAlertPresentException
 	 */
-	public void dismissAlert();
+	public void dismissAlert(String image);
 	
 	/**
 	 * This method will return the text of the alert
 	 * @author TestLeaf Team
 	 * @throws NoAlertPresentException
 	 */
-	public String getAlertText();
+	public String getAlertText(String image);
 
 	/**
 	 * This method will enter the value in the alert
@@ -94,7 +94,7 @@ public interface Browser {
 	 * @param data- the data to be entered in alert
 	 * @throws NoAlertPresentException
 	*/
-	public void typeAlert(String data);
+	public void typeAlert(String data, String image);
 	
 	/**
 	 * This method will switch to the Window of interest
@@ -102,7 +102,7 @@ public interface Browser {
 	 * @author TestLeaf Team
 	 * @throws NoSuchWindowException
 	 */
-	public void switchToWindow(int index);
+	public void switchToWindow(int index, String image);
 	
 	/**
 	 * This method will switch to the Window of interest using its title
@@ -111,7 +111,7 @@ public interface Browser {
 	 * @return 
 	 * @throws NoSuchWindowException
 	 */
-	public boolean switchToWindow(String title);
+	public boolean switchToWindow(String title, String image);
 	
 	/**
 	 * This method will switch to the specific frame using index
@@ -119,7 +119,7 @@ public interface Browser {
 	 * @author TestLeaf Team
 	 * @throws NoSuchFrameException 
 	 */
-	public void switchToFrame(int index);	
+	public void switchToFrame(int index, String image);	
 	
 	/**
 	 * This method will switch to the specific frame
@@ -127,7 +127,7 @@ public interface Browser {
 	 * @author TestLeaf Team
 	 * @throws NoSuchFrameException, StaleElementReferenceException 
 	 */
-	public void switchToFrame(WebElement ele);
+	public void switchToFrame(WebElement ele, String image);
 
 	/**
 	 * This method will switch to the specific frame using Id (or) Name
@@ -135,14 +135,14 @@ public interface Browser {
 	 * @author TestLeaf Team
 	 * @throws NoSuchFrameException 
 	 */
-	public void switchToFrame(String idOrName);
+	public void switchToFrame(String idOrName, String image);
 	
 	/**
 	 * This method will switch to the first frame on the page
 	 * @author TestLeaf Team
 	 * @return This driver focused on the top window/first frame.
 	 */
-	public void defaultContent();
+	public void defaultContent(String image);
 	
 	/**
 	 * This method will verify browser actual url with expected
@@ -151,7 +151,7 @@ public interface Browser {
 	@Override
 	 * @return true if the given object represents a String equivalent to this url, false otherwise
 	 */
-	public boolean verifyUrl(String url);
+	public boolean verifyUrl(String url, String image);
 	
 	/**
 	 * This method will verify browser actual title with expected
@@ -159,7 +159,7 @@ public interface Browser {
 	 * @author TestLeaf Team
 	 * @return true if the given object represents a String equivalent to this title, false otherwise
 	 */
-	public boolean verifyTitle(String title);
+	public boolean verifyTitle(String title, String image);
 	
 	/**
 	 * This method will take snapshot of the browser
@@ -172,14 +172,14 @@ public interface Browser {
 	 * This method will close the active browser
 	 * @author TestLeaf Team
 	 */
-	public void close();
+	public void close(String image);
 	
 	/**
 	 * This method will close all the browsers
 	 * @author TestLeaf Team
 	 */
-	public void quit();
+	public void quit(String image);
 
-	String getTypedText(WebElement ele, String attributeValue);
+
 
 }

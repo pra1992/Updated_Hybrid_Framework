@@ -34,6 +34,9 @@ public class WaitUtils extends SeleniumBase  {
 	public void waitForElementToBeStale(WebElement element) {
 		getWait().until(ExpectedConditions.stalenessOf(element));
 	}
+	public void waitForAlert() {
+		getWait().until(ExpectedConditions.alertIsPresent());
+	}
 	
 
 }

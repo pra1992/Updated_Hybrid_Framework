@@ -36,10 +36,13 @@ import org.testng.Assert;
 
 import com.web.app.framework.utlis.general.Logs;
 import com.web.app.framework.utlis.general.Reporter;
+import com.web.app.framework.utlis.general.WaitUtils;
 import com.web.app.framework.utlis.properties.ConfigPropertiesHandler;
 import com.web.app.selenium.api.design.Browser;
 import com.web.app.selenium.api.design.Element;
 import com.web.app.selenium.api.design.Locators;
+
+import net.bytebuddy.implementation.bytecode.Throw;
 
 public class SeleniumBase extends DriverInstance implements Browser, Element {
 
@@ -516,102 +519,75 @@ public class SeleniumBase extends DriverInstance implements Browser, Element {
 	}
 
 	@Override
-	public void startApp(String url, boolean headless) {
+	public void startApp(String url, boolean headless, String image) {
 		try {
 			setDriver(config.getDefaultBrowserName(), config.isBrowserHeadless());
 			getDriver().get(url);
 			getDriver().manage().timeouts().implicitlyWait(Duration.ofSeconds(config.getImplicitWaitTime()));
-		} catch (SessionNotCreatedException sne) {
-			new Logs().console().fail("A new session could not be successfully created. Due to --> " + sne.toString());
-			new Logs().file().fail("A new session could not be successfully created. Due to --> " + sne.toString());
-		} catch (ConnectionClosedException cce) {
-			new Logs().console().fail("The Driver Connection got lost. Due to --> " + cce.toString());
-			new Logs().file().fail("The Driver Connection got lost. Due to --> " + cce.toString());
-			throw new RuntimeException("The Driver Connection got lost. Due to --> " + cce.toString());
-		} catch (UnreachableBrowserException ube) {
+			Reporter.pass(url + "is launched");
+		} catch (SessionNotCreatedException e) {
+			new Logs().console().fail("A new session could not be successfully created. Due to --> " + e.toString());
+			new Logs().file().fail("A new session could not be successfully created. Due to --> " + e.toString());
+		    Reporter.fail("Unable to launch the " + url + "due to " + e, image); 
+		} catch (ConnectionClosedException e) {
+			new Logs().console().fail("The Driver Connection got lost. Due to --> " + e.toString());
+			new Logs().file().fail("The Driver Connection got lost. Due to --> " + e.toString());
+			Reporter.fail("Unable to launch the " + url + "due to " + e, image);
+			throw new RuntimeException("The Driver Connection got lost. Due to --> " + e.toString());
+			 
+		} catch (UnreachableBrowserException e) {
 			new Logs().console().fail("The " + config.getDefaultBrowserName()
-					+ " browser is unable to be opened or has crashed because of " + ube.toString());
+					+ " browser is unable to be opened or has crashed because of " + e.toString());
 			new Logs().file().fail("The " + config.getDefaultBrowserName()
-					+ " browser is unable to be opened or has crashed because of " + ube.toString());
+					+ " browser is unable to be opened or has crashed because of " + e.toString());
+			Reporter.fail("Unable to launch the " + url + "due to " + e, image);
 			throw new RuntimeException("The " + config.getDefaultBrowserName()
-					+ " browser is unable to be opened or has crashed because of " + ube.toString());
-		} catch (NoSuchDriverException nde) {
+					+ " browser is unable to be opened or has crashed because of " + e.toString());
+		} catch (NoSuchDriverException e) {
 			new Logs().console()
 					.fail("Unable to find " + config.getDefaultBrowserName()
 							+ " driver in the local machine and, Now trying to set driver by webdriver manager class. "
-							+ nde.toString());
+							+ e.toString());
 			new Logs().file()
 					.fail("Unable to find " + config.getDefaultBrowserName()
 							+ " driver in the local machine and, Now trying to set driver by webdriver manager class. "
-							+ nde.toString());
+							+ e.toString());
+			Reporter.fail("Unable to launch the " + url + "due to " + e, image);
 			System.out.println("Unable to find " + config.getDefaultBrowserName()
 					+ " driver in the local machine and, Now trying to set driver by webdriver manager class. "
-					+ nde.toString());
+					+ e.toString());
 		} catch (Exception e) {
 			new Logs().console().fail("Unable to launch given " + config.getDefaultBrowserName()
 					+ " browser. Due to --> " + e.toString());
 			new Logs().file().fail("Unable to launch given " + config.getDefaultBrowserName() + " browser. Due to --> "
 					+ e.toString());
+			Reporter.fail("Unable to launch the " + url + "due to " + e, image);
 			throw new RuntimeException("Unable to launch given " + config.getDefaultBrowserName()
 					+ " browser. Due to --> " + e.toString());
 		}
 	}
 
-	@Override
-	public void startApp(String browser, boolean headless, String url) {
-		try {
-			setDriver(browser, config.isBrowserHeadless());
-			getDriver().get(url);
-			getDriver().manage().timeouts().implicitlyWait(Duration.ofSeconds(config.getImplicitWaitTime()));
-		} catch (SessionNotCreatedException sne) {
-			new Logs().console().fail("A new session could not be successfully created. Due to --> " + sne.toString());
-			new Logs().file().fail("A new session could not be successfully created. Due to --> " + sne.toString());
-		} catch (ConnectionClosedException cce) {
-			new Logs().console().fail("The Driver Connection got lost. Due to --> " + cce.toString());
-			new Logs().file().fail("The Driver Connection got lost. Due to --> " + cce.toString());
-			throw new RuntimeException("The Driver Connection got lost. Due to --> " + cce.toString());
-		} catch (UnreachableBrowserException ube) {
-			new Logs().console().fail(
-					"The " + browser + " browser is unable to be opened or has crashed because of " + ube.toString());
-			new Logs().file().fail(
-					"The " + browser + " browser is unable to be opened or has crashed because of " + ube.toString());
-			throw new RuntimeException(
-					"The " + browser + " browser is unable to be opened or has crashed because of " + ube.toString());
-		} catch (NoSuchDriverException nde) {
-			new Logs().console()
-					.fail("Unable to find " + browser
-							+ " driver in the local machine and, Now trying to set driver by webdriver manager class. "
-							+ nde.toString());
-			new Logs().file()
-					.fail("Unable to find " + browser
-							+ " driver in the local machine and, Now trying to set driver by webdriver manager class. "
-							+ nde.toString());
-			System.out.println("Unable to find " + browser
-					+ " driver in the local machine and, Now trying to set driver by webdriver manager class. "
-					+ nde.toString());
-		} catch (Exception e) {
-			new Logs().console().fail("Unable to launch given " + browser + " browser. Due to --> " + e.toString());
-			new Logs().file().fail("Unable to launch given " + browser + " browser. Due to --> " + e.toString());
-			throw new RuntimeException("Unable to launch given " + browser + " browser. Due to --> " + e.toString());
-		}
-	}
 
 	@Override
-	public WebElement locateElement(Locators locatorType, String value) {
+	public WebElement locateElement(Locators locatorType, String value, String image) {
 		WebElement element = null;
 		try {
 			switch (locatorType) {
 			case ID:
 				element = getDriver().findElement(By.id(value));
+				Reporter.pass("Able to locate the" +  element + " with " + locatorType );
 				new Logs().console().pass("Found the given weblement " + value + " using id locator type.");
 				break;
 			case NAME:
 				element = getDriver().findElement(By.name(value));
+				Reporter.pass("Able to locate the" +  element + " with " + locatorType );
 				break;
 			case CLASS_NAME:
 				element = getDriver().findElement(By.className(value));
+				Reporter.pass("Able to locate the" +  element + " with " + locatorType );
 			case XPATH:
 				element = getDriver().findElement(By.xpath(value));
+				Reporter.pass("Able to locate the" +  element + " with " + locatorType );
 				break;
 			default:
 				break;
@@ -619,6 +595,7 @@ public class SeleniumBase extends DriverInstance implements Browser, Element {
 		} catch (NoSuchElementException e) {
 			new Logs().console().fail("Unable to found given web element " + value + " using" + locatorType.toString()
 					+ " type. " + e.toString());
+			Reporter.fail("Unable to locate the " + element + "due to " + e, image);
 			throw new RuntimeException("Unable to found given web element " + value + " using" + locatorType.toString()
 					+ " type." + e.toString());
 		} catch (StaleElementReferenceException e) {
@@ -626,6 +603,7 @@ public class SeleniumBase extends DriverInstance implements Browser, Element {
 			case ID:
 				getDriver().navigate().refresh();
 				element = getDriver().findElement(By.id(value));
+				Reporter.fail("Unable to locate the " + element + "due to " + e, image);
 				new Logs().console().pass("Found the given weblement " + value + " using id locator type.");
 				break;
 			case NAME:
@@ -643,6 +621,7 @@ public class SeleniumBase extends DriverInstance implements Browser, Element {
 		} catch (Exception e) {
 			new Logs().console().fail("Unable to find given web element " + value + " using" + locatorType.toString()
 					+ " type. " + e.toString());
+			Reporter.fail("Unable to locate the " + element + "due to " + e, image);
 			throw new RuntimeException("Unable to find given web element " + value + " using" + locatorType.toString()
 					+ " type. " + e.toString());
 		}
@@ -650,21 +629,25 @@ public class SeleniumBase extends DriverInstance implements Browser, Element {
 	}
 
 	@Override
-	public List<WebElement> locateElements(Locators locatorType, String value) {
+	public List<WebElement> locateElements(Locators locatorType, String value, String image) {
 		List<WebElement> element = null;
 		try {
 			switch (locatorType) {
 			case ID:
 				element = getDriver().findElements(By.id(value));
+				Reporter.pass("Able to locate the list of " +  element + " with " + locatorType );
 				new Logs().console().pass("Found the given weblement " + value + " using id locator type.");
 				break;
 			case NAME:
 				element = getDriver().findElements(By.name(value));
+				Reporter.pass("Able to locate the list of " +  element + " with " + locatorType );
 				break;
 			case CLASS_NAME:
 				element = getDriver().findElements(By.className(value));
+				Reporter.pass("Able to locate the list of " +  element + " with " + locatorType );
 			case XPATH:
 				element = getDriver().findElements(By.xpath(value));
+				Reporter.pass("Able to locate the list of " +  element + " with " + locatorType );
 				break;
 			default:
 				break;
@@ -672,6 +655,7 @@ public class SeleniumBase extends DriverInstance implements Browser, Element {
 		} catch (NoSuchElementException e) {
 			new Logs().console().fail("Unable to found given web element " + value + " using" + locatorType.toString()
 					+ " type. " + e.toString());
+			Reporter.fail("Unable to locate the list of " + element + "due to " + e, image);
 			throw new RuntimeException("Unable to found given web element " + value + " using" + locatorType.toString()
 					+ " type." + e.toString());
 		} catch (StaleElementReferenceException e) {
@@ -679,6 +663,7 @@ public class SeleniumBase extends DriverInstance implements Browser, Element {
 			case ID:
 				getDriver().navigate().refresh();
 				element = getDriver().findElements(By.id(value));
+				Reporter.fail("Unable to locate the list of " + element + "due to " + e, image);
 				new Logs().console().pass("Found the given weblement " + value + " using id locator type.");
 				break;
 			case NAME:
@@ -696,6 +681,7 @@ public class SeleniumBase extends DriverInstance implements Browser, Element {
 		} catch (Exception e) {
 			new Logs().console().fail("Unable to find given web element " + value + " using" + locatorType.toString()
 					+ " type. " + e.toString());
+			Reporter.fail("Unable to locate the list of " + element + "due to " + e, image);
 			throw new RuntimeException("Unable to find given web element " + value + " using" + locatorType.toString()
 					+ " type. " + e.toString());
 		}
@@ -708,72 +694,85 @@ public class SeleniumBase extends DriverInstance implements Browser, Element {
 			return getDriver().switchTo().alert();
 		} catch (NoAlertPresentException e) {
 			new Logs().console().fail("Unable to switch to the Alert due to " + e.getMessage());
+			new WaitUtils().waitForAlert();
+			return getDriver().switchTo().alert();
+		}
+		catch (Exception e) {
+			new Logs().console().fail("Unable to accept the alert due to " + e.getMessage());
 			return null;
 		}
-
 	}
 
 	@Override
-	public void acceptAlert() {
+	public void acceptAlert(String image) {
 		try {
 			switchToAlert().accept();
 			new Logs().console().pass("Able to accept the alert");
 		} catch (Exception e) {
+			Reporter.fail("Unable to accept the alert due to " + e, image);
 			new Logs().console().fail("Unable to accept the alert due to " + e.getMessage());
 		}
 
 	}
 
 	@Override
-	public void dismissAlert() {
+	public void dismissAlert(String image) {
 		try {
 			switchToAlert().dismiss();
 			new Logs().console().pass("Able to dismiss the alert");
 		} catch (Exception e) {
+			Reporter.fail("Unable to dismiss the alert due to " + e, image);
 			new Logs().console().fail("Unable to dismiss the alert due to " + e.getMessage());
 		}
 
 	}
 
 	@Override
-	public String getAlertText() {
+	public String getAlertText(String image) {
 		String AlertText = null;
 		try {
 			switchToAlert().getText().trim();
+			Reporter.pass("Able to extract the text from the alert");
 			new Logs().console().pass("Able to get the text on the alert");
 		} catch (Exception e) {
+			Reporter.fail("Unable to extract the alert text due to " + e, image);
 			new Logs().console().fail("Unable to get the text on the alert due to " + e.getMessage());
 		}
 		return AlertText;
 	}
 
 	@Override
-	public void typeAlert(String data) {
+	public void typeAlert(String data, String image) {
 		try {
 			switchToAlert().sendKeys(data);
+			Reporter.pass("Able to send the " + data + "in the alert box");
 			new Logs().console().pass("Able to type " + data + " in the alert text box");
 		} catch (Exception e) {
+			Reporter.fail("Unable to send the " + data + "to the Alert Text box due to " + e , data);
 			new Logs().console().fail("Unable to type the text on the alert due to " + e.getMessage());
 		}
 
 	}
 
 	@Override
-	public void switchToWindow(int index) {
+	public void switchToWindow(int index, String image) {
 		List<String> OpenedWindows = new ArrayList<String>(getDriver().getWindowHandles());
 		try {
 			for (index = 0; index < OpenedWindows.size(); index++) {
 				getDriver().switchTo().window(OpenedWindows.get(index));
+				Reporter.pass("Able to switch to the window of the index" + index);
 			}
 		} catch (NoSuchWindowException e) {
+			Reporter.fail("Unadble to switch to the window of the " + index + "due to" + e, image);
 			new Logs().console().fail("Unable to switch to the window due to " + e.getMessage());
 		} catch (Exception e) {
+			Reporter.fail("Unadble to switch to the window of the " + index + "due to" + e, image);
 			new Logs().console().fail("Unable to switch to the window due to " + e.getMessage());
 		}
 	}
 
 	@Override
-	public boolean switchToWindow(String title) {
+	public boolean switchToWindow(String title, String image) {
 		boolean found = false;
 		try {
 			String ParentWindow = getDriver().getWindowHandle();
@@ -782,119 +781,145 @@ public class SeleniumBase extends DriverInstance implements Browser, Element {
 					getDriver().switchTo().window(window);
 					if (getDriver().getTitle().equals(title)) {
 						found = true;
+						Reporter.pass("Able to switch to the window with " + title);
 						break;
 					}
 				}
 			}
 
 			if (!found) {
-				throw new RuntimeException("Unable to find window with " + title);
+				
+				RuntimeException e =  new RuntimeException("Unable to find window with " + title);
+				Reporter.fail("Unable to switch to the window with " + title + "due to" + e, image);
 			}
 		} catch (NoSuchWindowException e) {
+			Reporter.fail("Unable to switch to the window with " + title + "due to" + e, image);
 			new Logs().console().fail("Unable to switch to the window due to " + e.getMessage());
 		} catch (Exception e) {
+			Reporter.fail("Unable to switch to the window with " + title + "due to" + e, image);
 			new Logs().console().fail("Unable to switch to the window due to " + e.getMessage());
 		}
 		return found;
 
 	}
 
-	public void checkWindowHandles() {
+	public void checkWindowHandles(String image) {
 		String ParentWindow = getDriver().getWindowHandle();
 		try {
 			for (String OpenWindow : getDriver().getWindowHandles()) {
 				if (!OpenWindow.equals(ParentWindow)) {
 					getDriver().switchTo().window(OpenWindow);
+					Reporter.pass("Able to switch to the window");
 				}
 			}
 		} catch (NoSuchWindowException e) {
+			Reporter.fail("Not able to switch to the window", image);
 			new Logs().console().fail("Unable to switch to the window due to " + e.getMessage());
 		} catch (Exception e) {
+			Reporter.fail("Not able to switch to the window", image);
 			new Logs().console().fail("Unable to switch to the window due to " + e.getMessage());
 		}
 	}
 
 	@Override
-	public void switchToFrame(int index) {
+	public void switchToFrame(int index, String image) {
 		try {
 			getDriver().switchTo().frame(index);
+			Reporter.pass("Switched to the frame with " + index);
 			new Logs().console().pass("Able to switch the frame with" + index);
 		} catch (NoSuchFrameException e) {
+			Reporter.fail("Unable to siwtch to the frame with" + index + "due to" + e, image);
 			new Logs().console().fail("Unable to switch to the frame due to " + e.getMessage());
 		} catch (Exception e) {
+			Reporter.fail("Unable to siwtch to the frame with" + index + "due to" + e, image);
 			new Logs().console().fail("Unable to switch to the frame due to " + e.getMessage());
 		}
 
 	}
 
 	@Override
-	public void switchToFrame(WebElement ele) {
+	public void switchToFrame(WebElement ele, String image) {
 		try {
 			getDriver().switchTo().frame(ele);
+			Reporter.pass("Switched to the frame with " + ele);
 		} catch (NoSuchFrameException e) {
+			Reporter.fail("Unable to siwtch to the frame with" + ele + "due to" + e, image);
 			new Logs().console().fail("Unable to switch to the frame due to " + e.getMessage());
 		} catch (Exception e) {
+			Reporter.fail("Unable to siwtch to the frame with" + ele + "due to" + e, image);
 			new Logs().console().fail("Unable to switch to the frame due to " + e.getMessage());
 		}
 
 	}
 
 	@Override
-	public void switchToFrame(String idOrName) {
+	public void switchToFrame(String idOrName, String image) {
 		try {
 			getDriver().switchTo().frame(idOrName);
+			Reporter.pass("Switched to the frame with " + idOrName);
 		} catch (NoSuchFrameException e) {
+			Reporter.fail("Unable to switch to the frame with" + idOrName + "due to" + e, image);
+			new Logs().console().fail("Unable to switch to the frame due to " + e.getMessage());
 			new Logs().console().fail("Unable to switch to the frame due to " + e.getMessage());
 		} catch (Exception e) {
+			Reporter.fail("Unable to switch to the frame with" + idOrName + "due to" + e, image);
 			new Logs().console().fail("Unable to switch to the frame due to " + e.getMessage());
 		}
 
 	}
 
 	@Override
-	public void defaultContent() {
+	public void defaultContent(String image) {
 		try {
 			getDriver().switchTo().defaultContent();
+			Reporter.pass("Switched to the defaultcontent");
 		} catch (Exception e) {
+			Reporter.fail("Unable to switch to the default content due to" + e, image);
 			new Logs().console().fail("Unable to switch to the default content due to " + e.getMessage());
 		}
 
 	}
 
 	@Override
-	public boolean verifyUrl(String url) {
+	public boolean verifyUrl(String url, String image) {
 		boolean flag = false;
 		try {
 			if (getDriver().getCurrentUrl().equals(url)) {
 				flag = true;
+				Reporter.pass("Able to verify the Url correctly");
 			}
 		} catch (Exception e) {
 			new Logs().console().fail("Unable to verify the url due to " + e.getMessage());
+			Reporter.fail("Unable to verify the " + url, image);
 		}
 		return flag;
 	}
 
 	@Override
-	public boolean verifyTitle(String title) {
+	public boolean verifyTitle(String title, String image) {
 		boolean flag = false;
 		try {
 			if (getDriver().getTitle().equals(title)) {
 				flag = true;
+				Reporter.pass("Able to verify the title correctly");
 			}
 		} catch (Exception e) {
 			new Logs().console().fail("Unable to verify the title of the current page due to " + e.getMessage());
+			Reporter.fail("Unable to verify the " + title, image);
 		}
 		return flag;
 	}
 
 	@Override
-	public void close() {
+	public void close(String image) {
 		try {
 			if (getDriver() != null) {
 				getDriver().close();
+				Reporter.pass("Successfully closed the current window");
 				new Logs().console().pass("Successfully closed the current window");
 			}
 		} catch (Exception e) {
+			Reporter.fail("Unable to close the current window due to " + e, image);
 			new Logs().console().fail("Unable to close the current browser session due to  " + e.getMessage());
 		} finally {
 			if (getDriver() != null) {
@@ -906,13 +931,15 @@ public class SeleniumBase extends DriverInstance implements Browser, Element {
 	}
 
 	@Override
-	public void quit() {
+	public void quit(String image) {
 		try {
 			if (getDriver() != null) {
 				getDriver().quit();
+				Reporter.pass("Successfully closed all the windows");
 				new Logs().console().pass("Successfully closed all the browser sessions");
 			}
 		} catch (Exception e) {
+			Reporter.fail("Unable to close all the windows due to " + e, image);
 			new Logs().console().fail("Unable to close all the browser sessions due to  " + e.getMessage());
 		} finally {
 			if (getDriver() != null) {
@@ -1013,6 +1040,7 @@ public class SeleniumBase extends DriverInstance implements Browser, Element {
 				break;
 			}
 		} catch (Exception e) {
+			
 			new Logs().console().fail("Unable to fect the KeyEvent due to " + e.getMessage());
 			new Logs().file().fail("Unable to fect the KeyEvent due to " + e.getMessage());
 		}
@@ -1262,11 +1290,12 @@ public class SeleniumBase extends DriverInstance implements Browser, Element {
 		public String takeSnapshot() {
 			return getDriver().getScreenshotAs(OutputType.BASE64);
 		}
+		
 
 		@Override
-		public String getTypedText(WebElement ele, String attributeValue) {
+		public void startApp(String url, boolean headless) {
 			// TODO Auto-generated method stub
-			return null;
+			
 		}
 		
 		
